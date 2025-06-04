@@ -1,0 +1,65 @@
+tenantName: tenant1
+
+# Frontend settings
+frontend:
+  replicas: 2
+  image:
+    repository: ghcr.io/example-org/frontend
+    tag: dev-latest
+  ingress:
+    enabled: true
+    host: tenant1-dev.example.com
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+    requests:
+      cpu: "250m"
+      memory: "128Mi"
+  env:
+    - name: NODE_ENV
+      value: "development"
+    - name: API_URL
+      value: "https://api.tenant1-dev.example.com"
+
+# Backend settings
+backend:
+  replicas: 3
+  image:
+    repository: ghcr.io/example-org/backend
+    tag: dev-latest
+  resources:
+    limits:
+      cpu: "1"
+      memory: "512Mi"
+    requests:
+      cpu: "500m"
+      memory: "256Mi"
+  env:
+    - name: DB_HOST
+      value: "db.tenant1-dev.svc.cluster.local"
+    - name: DB_USER
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: user
+    - name: DB_PASS
+      valueFrom:
+        secretKeyRef:
+          name: db-secret
+          key: password
+    - name: LOG_LEVEL
+      value: "debug"
+
+# Database settings
+database:
+  enabled: true
+  storageSize: "5Gi"
+  backups:
+    enabled: true
+    schedule: "0 3 * * *"
+
+# Feature flags
+features:
+  enableBetaFeatures: true
+  enableLogging: true

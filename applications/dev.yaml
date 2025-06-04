@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tenant1-dev-app
+spec:
+  project: tenant1-project
+  source:
+    repoURL: https://github.com/coreyperkins/argocd-mt.git
+    targetRevision: main
+    chart: tenant-chart
+    helm:
+      valueFiles:
+      - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tenant1-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

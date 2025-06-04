@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: tenant1-project
+spec:
+  sourceRepos:
+    - https://github.com/coreyperkins/argocd-mt.git
+  destinations:
+    - namespace: tenant1-dev
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: "Namespace"
+    - group: "apps"
+      kind: "Deployment"
